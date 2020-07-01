@@ -1,0 +1,53 @@
+From 4310c37c7dbe4e54760710db61ef97386ee01397 Mon Sep 17 00:00:00 2001
+From: Viktor Ivanov <vik.ivanov98@gmail.com>
+Date: Wed, 1 Jul 2020 18:58:16 -0400
+Subject: [PATCH] Fixed the typescript files to make the we application output
+ correctly
+
+---
+ src/Graph.tsx | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/src/Graph.tsx b/src/Graph.tsx
+index ec1430e..6ef84bd 100644
+--- a/src/Graph.tsx
++++ b/src/Graph.tsx
+@@ -14,7 +14,7 @@ interface IProps {
+  * Perspective library adds load to HTMLElement prototype.
+  * This interface acts as a wrapper for Typescript compiler.
+  */
+-interface PerspectiveViewerElement {
++interface PerspectiveViewerElement extends HTMLElement{
+   load: (table: Table) => void,
+ }
+ 
+@@ -32,7 +32,7 @@ class Graph extends Component<IProps, {}> {
+ 
+   componentDidMount() {
+     // Get element to attach the table from the DOM.
+-    const elem: PerspectiveViewerElement = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
++    const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
+ 
+     const schema = {
+       stock: 'string',
+@@ -47,7 +47,16 @@ class Graph extends Component<IProps, {}> {
+     if (this.table) {
+       // Load the `table` in the `<perspective-viewer>` DOM reference.
+ 
+-      // Add more Perspective configurations here.
++      // More Perspective configurations here.
++      elem.setAttribute('view', 'y_line');
++      elem.setAttribute('column-pivots', '["stock"]');
++      elem.setAttribute('row-pivots', '["timestamp"]');
++      elem.setAttribute('columns', '["top_ask_price"]');
++      elem.setAttribute('aggregates',`
++      {"stock":"distinct count",
++      "top_ask_price":"avg",
++      "top_bid_price":"avg",
++      "timestamp":"distinct count"}`);
+       elem.load(this.table);
+     }
+   }
+-- 
+2.27.0.windows.1
+
